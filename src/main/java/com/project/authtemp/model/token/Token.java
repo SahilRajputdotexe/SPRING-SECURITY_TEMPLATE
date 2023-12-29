@@ -1,5 +1,6 @@
 package com.project.authtemp.model.token;
 
+import com.project.authtemp.model.role.TokenRole;
 import com.project.authtemp.model.user.User;
 
 import jakarta.persistence.Column;
@@ -29,10 +30,13 @@ public class Token {
 
   @Column(unique = true)
   public String token;
-
   @Enumerated(EnumType.STRING)
   @Builder.Default
   public TokenType tokenType = TokenType.BEARER;
+
+  @Enumerated(EnumType.STRING)
+
+  public TokenRole tokenRole;
 
   private boolean revoked;
   private boolean expired;

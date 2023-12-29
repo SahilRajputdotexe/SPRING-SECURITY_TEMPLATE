@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,7 +17,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.project.authtemp.model.role.TokenRole;
+import com.project.authtemp.model.token.Token;
+import com.project.authtemp.model.token.TokenRepository;
+import com.project.authtemp.model.token.TokenType;
+import com.project.authtemp.model.user.User;
+
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
   @Value("${application.security.jwt.secret-key}")
@@ -24,6 +33,8 @@ public class JwtService {
   private long jwtExpiration;
   @Value("${application.security.jwt.refresh-token.expiration}")
   private long refreshExpiration;
+
+  private final TokenRepository tokenRepository;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -65,7 +76,13 @@ public class JwtService {
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && !isTokenRevoked(token);
+  }
+
+  private boolean isTokenRevoked(String token) {
+    var storedToken = tokenRepository.findByToken(token)
+        .orElse(null);
+    return storedToken != null && storedToken.isRevoked();
   }
 
   private boolean isTokenExpired(String token) {
@@ -88,5 +105,41 @@ public class JwtService {
   private Key getSignInKey() {
     byte[] keyBytes = Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
+  }
+
+  public void saveAccessToken(User user, String jwtToken) {
+    var token = Token.builder()
+        .user(user)
+        .token(jwtToken)
+        .tokenType(TokenType.BEARER)
+        .expired(false)
+        .tokenRole(TokenRole.ACCESS)
+        .revoked(false)
+        .build();
+    tokenRepository.save(token);
+  }
+
+  public void saveRefreshToken(User user, String jwtToken) {
+    var token = Token.builder()
+        .user(user)
+        .token(jwtToken)
+        .tokenType(TokenType.BEARER)
+        .expired(false)
+        .tokenRole(TokenRole.REFRESH)
+        .revoked(false)
+        .build();
+    tokenRepository.save(token);
+  }
+
+  public void saveForgotPasswordToken(User user, String jwtToken) {
+    var token = Token.builder()
+        .user(user)
+        .token(jwtToken)
+        .tokenType(TokenType.BEARER)
+        .expired(false)
+        .tokenRole(TokenRole.FORGOTPASSWORD)
+        .revoked(false)
+        .build();
+    tokenRepository.save(token);
   }
 }

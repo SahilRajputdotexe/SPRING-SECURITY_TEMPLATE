@@ -1,6 +1,8 @@
 package com.project.authtemp.services;
 
 import org.json.JSONObject;
+
+import com.project.authtemp.model.role.TokenRole;
 import com.project.authtemp.model.token.Token;
 import com.project.authtemp.model.token.TokenRepository;
 import com.project.authtemp.model.token.TokenType;
@@ -45,8 +47,8 @@ public class AuthenticationService {
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
-    saveUserToken(savedUser, jwtToken);
-
+    jwtService.saveAccessToken(savedUser, jwtToken);
+    jwtService.saveRefreshToken(savedUser, refreshToken);
     JSONObject registerResponse = new JSONObject(
         AuthenticationResponse.builder()
             .accessToken(jwtToken)
@@ -71,7 +73,8 @@ public class AuthenticationService {
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
-    saveUserToken(user, jwtToken);
+    jwtService.saveAccessToken(user, jwtToken);
+    jwtService.saveRefreshToken(user, refreshToken);
     JSONObject authResponse = new JSONObject(AuthenticationResponse.builder()
         .accessToken(jwtToken)
         .refreshToken(refreshToken)
@@ -83,17 +86,6 @@ public class AuthenticationService {
         .responseObject(authResponse.toMap())
         .errorObject(null)
         .build();
-  }
-
-  private void saveUserToken(User user, String jwtToken) {
-    var token = Token.builder()
-        .user(user)
-        .token(jwtToken)
-        .tokenType(TokenType.BEARER)
-        .expired(false)
-        .revoked(false)
-        .build();
-    tokenRepository.save(token);
   }
 
   private void revokeAllUserTokens(User user) {
@@ -124,7 +116,7 @@ public class AuthenticationService {
       if (jwtService.isTokenValid(refreshToken, user)) {
         var accessToken = jwtService.generateToken(user);
         revokeAllUserTokens(user);
-        saveUserToken(user, accessToken);
+        jwtService.saveAccessToken(user, accessToken);
         var authResponse = AuthenticationResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
