@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.security.Key;
 import java.util.Date;
@@ -33,6 +34,8 @@ public class JwtService {
   private long jwtExpiration;
   @Value("${application.security.jwt.refresh-token.expiration}")
   private long refreshExpiration;
+  @Value("${application.security.jwt.forgot-password-token.expiration}")
+  private long fpExpiration;
 
   private final TokenRepository tokenRepository;
 
@@ -58,6 +61,11 @@ public class JwtService {
   public String generateRefreshToken(
       UserDetails userDetails) {
     return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+  }
+
+  public String generateForgotPasswordToken(
+      UserDetails userDetails) {
+    return buildToken(new HashMap<>(), userDetails, fpExpiration);
   }
 
   private String buildToken(

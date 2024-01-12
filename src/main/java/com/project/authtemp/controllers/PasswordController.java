@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.project.authtemp.payload.request.ChangePasswrodRequest;
+import com.project.authtemp.payload.request.ForgotPasswordRequest;
 import com.project.authtemp.payload.response.GeneralMessageResponse;
 import com.project.authtemp.services.ChangePasswordService;
 
@@ -15,9 +16,9 @@ public class PasswordController {
 
     ChangePasswordService service;
 
-    @PostMapping("/forgotpassword")
-    public String forgotPassword() {
-        return "POST:: forgot password";
+    @PostMapping("/forgot-password")
+    public ResponseEntity<GeneralMessageResponse> sendforgotPasswordemail(@RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(service.sendForgotPasswordMail(request));
     }
 
     @PostMapping("/changepasswordWithPassword")
