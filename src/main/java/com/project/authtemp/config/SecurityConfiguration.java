@@ -36,8 +36,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
         private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**",
-                        "/v2/api-docs", // TODO fix this pasword controller
                         "/api/v1/password/**",
+                        "/v2/api-docs",
                         "/v3/api-docs",
                         "/v3/api-docs/**",
                         "/swagger-resources",

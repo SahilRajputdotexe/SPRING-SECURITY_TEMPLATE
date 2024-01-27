@@ -1,9 +1,12 @@
 package com.project.authtemp.services;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.authtemp.model.token.TokenRepository;
+import com.project.authtemp.model.user.User;
 import com.project.authtemp.model.user.UserRepository;
 import com.project.authtemp.payload.request.ChangePasswrodRequest;
 import com.project.authtemp.payload.request.ForgotPasswordRequest;
@@ -53,19 +56,28 @@ public class ChangePasswordService {
 
     public GeneralMessageResponse sendForgotPasswordMail(ForgotPasswordRequest request) {
 
-        var user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var fpToken = jwtService.generateForgotPasswordToken(user);
+        Optional<User> userOptional = repository.findByEmail(request.getEmail());
+        System.out.println(request.toString());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String fpToken = jwtService.generateForgotPasswordToken(user);
 
-        jwtService.saveForgotPasswordToken(user, fpToken);
+            jwtService.saveForgotPasswordToken(user, fpToken);
 
-        mailService.sendEMail(request.getEmail(), "Forgot Password",
-                "http://localhost:8080/forgot-password/" + fpToken);
+            mailService.sendEMail(request.getEmail(), "Forgot Password",
+                    "http://localhost:8080/forgot-password/" + fpToken);
 
-        return GeneralMessageResponse.builder()
-                .isSuccess(true)
-                .message("Mail sent successfully")
-                .build();
+            return GeneralMessageResponse.builder()
+                    .isSuccess(true)
+                    .message("Mail sent successfully")
+                    .build();
+        } else {
+            return GeneralMessageResponse.builder()
+                    .isSuccess(false)
+                    .message("User not found")
+                    .errorObject(new ErrorResponse(404, "User not found", "User not found"))
+                    .build();
+        }
     }
 
 }

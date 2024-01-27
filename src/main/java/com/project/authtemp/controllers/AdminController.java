@@ -22,7 +22,6 @@ public class AdminController {
 
     MailService service;
 
-    @Autowired
     public AdminController(MailService service) {
         this.service = service;
     }
