@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.authtemp.payload.response.GeneralMessageResponse;
 import com.project.authtemp.services.MailService;
 
+// test
+
 @RestController
 @RequestMapping("/api/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
