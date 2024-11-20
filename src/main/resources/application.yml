@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/authtempdb
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: 12345
 
@@ -25,7 +25,11 @@ spring:
           starttls:
             enable: true
             required: true
-
+logging:
+  level:
+    org :
+      springframework :
+        web: DEBUG
 application:
   security:
     jwt:
@@ -33,6 +37,7 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
-
+      forgot-password-token:
+        expiration: 3600000 # 1 hour
 
 

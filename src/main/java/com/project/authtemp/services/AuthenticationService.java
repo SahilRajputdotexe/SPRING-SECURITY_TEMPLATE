@@ -11,19 +11,25 @@ import com.project.authtemp.model.user.UserRepository;
 import com.project.authtemp.payload.request.AuthenticationRequest;
 import com.project.authtemp.payload.request.RegisterRequest;
 import com.project.authtemp.payload.response.AuthenticationResponse;
+import com.project.authtemp.payload.response.ErrorResponse;
 import com.project.authtemp.payload.response.GeneralMessageResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
 
@@ -64,12 +70,17 @@ public class AuthenticationService {
   }
 
   public GeneralMessageResponse authenticate(AuthenticationRequest request) {
+
+    System.out.println(request.getEmail() + " " + request.getPassword());
+
+    var user = repository.findByEmail(request.getEmail())
+        .orElseThrow(() -> new BadCredentialsException("USER DOES NOT EXISIT"));
+
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
             request.getPassword()));
-    var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
+
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
@@ -125,4 +136,5 @@ public class AuthenticationService {
       }
     }
   }
+
 }
