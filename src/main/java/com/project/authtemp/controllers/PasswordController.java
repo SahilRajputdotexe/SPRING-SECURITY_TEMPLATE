@@ -1,6 +1,5 @@
 package com.project.authtemp.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +10,7 @@ import com.project.authtemp.payload.request.ForgotPasswordRequest;
 import com.project.authtemp.payload.response.GeneralMessageResponse;
 import com.project.authtemp.services.ChangePasswordService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,7 +20,7 @@ public class PasswordController {
 
     private final ChangePasswordService service;
 
-    @RequestMapping("/forgot-password") // TODO fix body issues
+    @PostMapping("/forgot-password")
     public ResponseEntity<GeneralMessageResponse> sendforgotPasswordemail(@RequestBody ForgotPasswordRequest request) {
         return ResponseEntity.ok(service.sendForgotPasswordMail(request));
     }
@@ -33,7 +32,7 @@ public class PasswordController {
     }
 
     @PostMapping("/changepasswordWithToken")
-    public String changePasswordWithToken() {
+    public String changePasswordWithToken() {// TODO: the send change password email works so complete this function
         return "POST:: reset password with token";
     }
 

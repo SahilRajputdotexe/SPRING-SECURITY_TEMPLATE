@@ -22,7 +22,7 @@ public class MailService {
         message.setSubject(subject);
         message.setText(text);
         mailSender.send(message);
-
+        System.out.println("Mail sent successfully");
         return GeneralMessageResponse.builder().isSuccess(true).message("Mail sent successfully").build();
 
     }

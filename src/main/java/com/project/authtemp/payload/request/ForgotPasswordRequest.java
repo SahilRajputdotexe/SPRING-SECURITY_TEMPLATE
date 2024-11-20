@@ -9,8 +9,6 @@ import lombok.Setter;
 
 @Data
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ForgotPasswordRequest {

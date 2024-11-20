@@ -80,4 +80,27 @@ public class ChangePasswordService {
         }
     }
 
+    public GeneralMessageResponse changePasswordWithToken(String token, String newPassword) {
+
+        var user = tokenRepository.findByToken(token)
+                .map(tokenEntity -> tokenEntity.getUser())
+                .orElse(null);
+
+        var tokenEntity = tokenRepository.findByToken(token).orElse(null);
+
+        if (user == null || !jwtService.isTokenValid(tokenEntity.getToken(), user)) {
+            return GeneralMessageResponse.builder()
+                    .isSuccess(false)
+                    .message("Invalid token")
+                    .errorObject(new ErrorResponse(400, "Invalid token", "Invalid token"))
+                    .build();
+        } else {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            repository.save(user);
+            return GeneralMessageResponse.builder()
+                    .isSuccess(true)
+                    .message("Password changed successfully")
+                    .build();
+        }
+    }
 }
