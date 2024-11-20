@@ -24,7 +24,6 @@ public class AdminController {
 
     MailService service;
 
-    @Autowired
     public AdminController(MailService service) {
         this.service = service;
     }
@@ -37,6 +36,8 @@ public class AdminController {
 
     @PostMapping("/sendmail")
     public ResponseEntity<GeneralMessageResponse> sendEmail() {
+        System.out.println("Mail sent successfully 1");
+
         return ResponseEntity.ok(service.sendEMail("ajstylespheno@gmail.com", "subject", "text"));
     }
 
