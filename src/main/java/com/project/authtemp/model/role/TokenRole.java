@@ -7,7 +7,8 @@ public enum TokenRole {
 
     ACCESS("access"),
     REFRESH("refresh"),
-    FORGOTPASSWORD("forgotpassword");
+    FORGOTPASSWORD("forgotpassword"),
+    CREDENTIALS("credentials");
 
     private final String tokenRole;
 

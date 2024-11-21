@@ -65,7 +65,7 @@ public class ChangePasswordService {
             jwtService.saveForgotPasswordToken(user, fpToken);
 
             mailService.sendEMail(request.getEmail(), "Forgot Password",
-                    "http://localhost:8080/forgot-password/" + fpToken);
+                    "http://localhost:8080/forgot-password?token=" + fpToken);
 
             return GeneralMessageResponse.builder()
                     .isSuccess(true)

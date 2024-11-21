@@ -17,8 +17,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.project.authtemp.model.credentials.Credentials;
 import com.project.authtemp.model.role.Role;
-import com.project.authtemp.model.savedpass.savedPass;
+
 import com.project.authtemp.model.token.Token;
 
 @Data
@@ -44,7 +45,7 @@ public class User implements UserDetails {
   private transient List<Token> tokens;
 
   @OneToMany(mappedBy = "user")
-  private transient List<savedPass> savedPasses;
+  private transient List<Credentials> credentials;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

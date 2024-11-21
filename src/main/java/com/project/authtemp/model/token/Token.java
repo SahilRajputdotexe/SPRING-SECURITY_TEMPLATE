@@ -1,5 +1,6 @@
 package com.project.authtemp.model.token;
 
+import com.project.authtemp.model.credentials.Credentials;
 import com.project.authtemp.model.role.TokenRole;
 import com.project.authtemp.model.user.User;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -61,4 +63,7 @@ public class Token {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
+
+  @OneToOne(mappedBy = "token", fetch = FetchType.LAZY)
+  private Credentials credentials;
 }

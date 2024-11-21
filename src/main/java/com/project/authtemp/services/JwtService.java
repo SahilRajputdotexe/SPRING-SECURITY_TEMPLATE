@@ -68,6 +68,12 @@ public class JwtService {
     return buildToken(new HashMap<>(), userDetails, fpExpiration);
   }
 
+  public String generateCredentialsToken(UserDetails userDetails, Integer id) {
+    val extraClaims = new HashMap<String, Object>();
+    extraClaims.put("credentials_id", id);
+    return buildToken(extraClaims, userDetails, jwtExpiration);
+  }
+
   private String buildToken(
       Map<String, Object> extraClaims,
       UserDetails userDetails,

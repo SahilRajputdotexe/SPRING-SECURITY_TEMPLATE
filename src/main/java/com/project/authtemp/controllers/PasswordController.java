@@ -3,6 +3,8 @@ package com.project.authtemp.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.authtemp.payload.request.ChangePasswrodRequest;
@@ -32,8 +34,9 @@ public class PasswordController {
     }
 
     @PostMapping("/changepasswordWithToken")
-    public String changePasswordWithToken() {// TODO: the send change password email works so complete this function
-        return "POST:: reset password with token";
+    public ResponseEntity<GeneralMessageResponse> changePasswordWithToken(
+            @RequestParam String token, @RequestBody String newPassword) {
+        return ResponseEntity.ok(service.changePasswordWithToken(token, newPassword));
     }
 
 }
